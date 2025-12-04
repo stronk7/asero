@@ -17,7 +17,7 @@ A(nother) semantic routing system that classifies user queries into hierarchical
 ## Quick start
 
 1. Install it with `pip install .`
-2. Setup the `.env` file (start with the provided `env_template`one).
+2. Setup the `.env` file (start with the provided `dotenv.template`one).
 3. Optionally, edit the `router_example.yaml` to define your routes.
 4. Play with the routes using the `asero` CLI command.
 5. That's all!
@@ -26,7 +26,7 @@ A(nother) semantic routing system that classifies user queries into hierarchical
 
 1. Install development dependencies: `pip install .[dev]`
 2. Enable up pre-commit hooks: `pre-commit install`
-3. Setup the `.env` file (start with the provided `env_template`one).
+3. Setup the `.env` file (start with the provided `dotenv.template`one).
 4. Hack, hack, hack (the `asero` CLI command, that runs `main.py`, should be enough)
 5. Test, test, test. Try to cover as much as possible always.
 
