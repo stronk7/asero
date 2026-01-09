@@ -10,7 +10,8 @@ and commits should be formatted using [Conventional Commits](https://www.convent
 
 ### Changed
 
-- Detail: Rename `env_template` to `dotenv.template`
+- Detail: Rename `env_template` to `dotenv.template` ([bb59699](https://github.com/moodlehq/asero/commit/bb59699c8bd1fd49803b20f73e386199bf4ebbed))
+- Dependencies: Bump library and dev dependencies to current ones
 
 ## [0.4.2] - 2025-12-04
 
