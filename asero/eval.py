@@ -168,8 +168,8 @@ def evaluate(eval_file: str, metric: str = "top1"):
     print("Evaluation finished.")
     print(f"Evaluation metric     : {metric}")
     print(f"Total eval cases      : {total}")
-    print(f"Top-{top_k} Accuracy  : {topk_accuracy:0.7f}")
-    print(f"MRR@{mrr_k}                  : {mrr:0.7f}")
+    print(f"Top-{top_k} Accuracy        : {topk_accuracy:0.7f}")
+    print(f"MRR@{mrr_k}                 : {mrr:0.7f}")
 
 
 def _compute_metric_for_threshold(query_results: list, route: str, threshold: float, metric: str) -> int:

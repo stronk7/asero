@@ -44,7 +44,7 @@ def main():
     parser.add_argument(
         "--evaluate",
         metavar="<path to eval file>",
-        help="Run evaluation on the specified eval file instead of the REPL",
+        help="Run evaluation on the specified eval file",
     )
     parser.add_argument(
         "--optimise",

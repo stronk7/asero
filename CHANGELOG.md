@@ -6,17 +6,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html),
 and commits should be formatted using [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
 
+## [Unreleased]
+
+### Fixed
+
+- Output: Fix a few help/output typos and formatting issues
+
 ## [0.5.0] - 2026-03-17
 
 ### Added
 
-- Augment: Add LLM-based utterance augmentation script ([9656f2c](https://github.com/moodlehq/asero/commit/9656f2c59eb5f432dd082737195755d8a6f823e5))
-- Eval: Add new evaluation module with evaluate and optimise utilities ([4b3f837](https://github.com/moodlehq/asero/commit/4b3f8378129af7cfd2e86ef64d558c4acc7f2fd0))
-- Eval: Add support to evaluate and optimise from the asero command ([ec9b076](https://github.com/moodlehq/asero/commit/ec9b07685ac17883c9dd9d026cc92cb7a5982d86))
+- Augment: Add LLM-based utterance augmentation script by @stronk7 ([9656f2c](https://github.com/moodlehq/asero/commit/9656f2c59eb5f432dd082737195755d8a6f823e5))
+- Eval: Add new evaluation module with evaluate and optimise utilities by @stronk7 ([4b3f837](https://github.com/moodlehq/asero/commit/4b3f8378129af7cfd2e86ef64d558c4acc7f2fd0))
+- Eval: Add support to evaluate and optimise from the asero command by @stronk7 ([ec9b076](https://github.com/moodlehq/asero/commit/ec9b07685ac17883c9dd9d026cc92cb7a5982d86))
 
 ### Changed
 
-- Dependencies: Bump library and dev dependencies to current ones ([730c9a9](https://github.com/moodlehq/asero/commit/730c9a97e83ef4f84e064e852fff43a2fcb2224d))
+- Dependencies: Bump library and dev dependencies to current ones by @stronk7 ([730c9a9](https://github.com/moodlehq/asero/commit/730c9a97e83ef4f84e064e852fff43a2fcb2224d))
 
 **Full Changelog**: https://github.com/moodlehq/asero/compare/v0.4.3...v0.5.0
 
@@ -217,6 +223,7 @@ and commits should be formatted using [Conventional Commits](https://www.convent
 
 **Full Changelog**: https://github.com/moodlehq/asero/compare/v0.2.0...v0.2.1
 
+[unreleased]: https://github.com/moodlehq/asero/compare/v0.5.0..HEAD
 [0.5.0]: https://github.com/moodlehq/asero/compare/v0.4.3..v0.5.0
 [0.4.3]: https://github.com/moodlehq/asero/compare/v0.4.2..v0.4.3
 [0.4.2]: https://github.com/moodlehq/asero/compare/v0.4.1..v0.4.2
