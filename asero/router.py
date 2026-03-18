@@ -44,7 +44,7 @@ class SemanticRouterNode:
         config: SemanticRouterConfig,
         parent: Self | None = None,
         threshold: float | None = None,
-        eval_mode: bool = False,
+        apply_thresholds: bool = True,
     ):
         """Initialize a SemanticRouterNode.
 
@@ -55,7 +55,7 @@ class SemanticRouterNode:
             config (SemanticRouterConfig): Config object.
             parent (SemanticRouterNode | None): Parent node. Set by parent, or None for root.
             threshold (float): Similarity threshold for routing.
-            eval_mode (bool): Whether this instance is for evaluation purposes.
+            apply_thresholds (bool): When False, all thresholds are set to 0 so every route is considered.
 
         """
         self.name = name
@@ -63,43 +63,45 @@ class SemanticRouterNode:
         self.children = children or []
         self.config = config
         self.parent = parent
-        self.threshold = 0 if eval_mode else threshold if threshold is not None else config.threshold
-        self.eval_mode = eval_mode
+        self.threshold = threshold if (apply_thresholds and threshold is not None) \
+            else 0 if not apply_thresholds \
+            else config.threshold
+        self.apply_thresholds = apply_thresholds
         # Propagate config to children:
         for child in self.children:
             child.parent = self
             child.config = self.config
-            child.eval_mode = self.eval_mode
+            child.apply_thresholds = self.apply_thresholds
         self.embedding_indices = None
 
     @classmethod
-    def load(cls, config: SemanticRouterConfig, eval_mode: bool = False) -> tuple["SemanticRouterNode", dict]:
+    def load(cls, config: SemanticRouterConfig, apply_thresholds: bool = True) -> tuple["SemanticRouterNode", dict]:
         """Load the semantic router tree from a YAML file.
 
         Args:
             config (SemanticRouterConfig): Configuration object containing the YAML file path.
-            eval_mode (bool, optional): Whether this instance is for evaluation purposes. Defaults to False.
+            apply_thresholds (bool, optional): When False, all thresholds are set to 0. Defaults to True.
 
         Returns:
             tuple[SemanticRouterNode, dict]: A tuple containing the root node and the parsed YAML dictionary.
 
         """
         d = load_tree_from_yaml(config.yaml_file)
-        return cls.build(d, config, eval_mode), d
+        return cls.build(d, config, apply_thresholds), d
 
     @classmethod
     def build(
         cls,
         d: dict,
         config: SemanticRouterConfig,
-        eval_mode: bool = False,
+        apply_thresholds: bool = True,
     ) -> "SemanticRouterNode":
         """Build a SemanticRouterNode from a dictionary structure.
 
         Args:
             d (dict): Dictionary representing the node and its children.
             config (SemanticRouterConfig): Configuration object.
-            eval_mode (bool, optional): Whether this instance is for evaluation purposes. Defaults to False.
+            apply_thresholds (bool, optional): When False, all thresholds are set to 0. Defaults to True.
 
         Returns:
             SemanticRouterNode: The constructed node.
@@ -111,10 +113,10 @@ class SemanticRouterNode:
             children=[],
             config=config,
             parent=None,
-            threshold=0 if eval_mode else d.get("threshold", config.threshold),
+            threshold=d.get("threshold", config.threshold) if apply_thresholds else 0,
         )
         node.children = [
-            cls.build(c, config, eval_mode) for c in d.get("children", [])
+            cls.build(c, config, apply_thresholds) for c in d.get("children", [])
         ]
         for child in node.children:
             child.parent = node
@@ -180,7 +182,7 @@ class SemanticRouterNode:
             children=[child.clone_with_parents() for child in self.children],
             config=self.config,
             parent=parent,
-            threshold=0 if self.eval_mode else self.threshold or self.config.threshold,
+            threshold=self.threshold or self.config.threshold if self.apply_thresholds else 0,
         )
         return node
 
@@ -481,17 +483,17 @@ class SemanticRouter:
     def __init__(
         self,
         config: SemanticRouterConfig,
-        eval_mode: bool = False,
+        apply_thresholds: bool = True,
     ):
         """Initialize the SemanticRouter, loading the tree and embedding cache."""
         setup_logging(level=LOG_LEVEL)
         logger.info("Another Semantic Router (asero) starting up...")
         logger.info(f"Version: {__version__}")
         logger.info(f"Using router YAML file: {config.yaml_file}")
-        if eval_mode:
-            logger.info("Evaluation mode: thresholds disabled.")
+        if not apply_thresholds:
+            logger.info("Thresholds disabled (apply_thresholds=False).")
 
-        self.root, self.tree_dict = SemanticRouterNode.load(config, eval_mode=eval_mode)
+        self.root, self.tree_dict = SemanticRouterNode.load(config, apply_thresholds=apply_thresholds)
         self.root.validate_and_fix_nodes(self.root)
         self.tree_checksum = compute_dict_checksum(self.tree_dict)
         self.embedding_cache = load_or_regenerate_embedding_cache_for_tree(self.root, config, self.tree_checksum)

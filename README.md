@@ -63,8 +63,6 @@ asero --evaluate <path to eval file> [--metric top1|top2|top3|top4|top5]
 - **`--evaluate`** — path to the JSON evaluation file (produced by `augment`).
 - **`--metric`** — which top-K level to report as the headline accuracy figure (default: `top1`).
 
-The evaluation runs in *eval mode*: all routing thresholds are disabled so every query always returns scores, giving a true picture of the embedding quality independent of threshold tuning.
-
 ### `asero --optimise` — tune per-route similarity thresholds
 
 Searches for the threshold values that maximise the chosen accuracy metric on a dataset, then optionally writes the results back to the router YAML.

@@ -10,7 +10,8 @@ and commits should be formatted using [Conventional Commits](https://www.convent
 
 ### Fixed
 
-- Output: Fix a few help/output typos and formatting issues
+- Output: Fix a few help/output typos and formatting issues ([4f9edd2](https://github.com/moodlehq/asero/commit/4f9edd21e129a8cf5b716a1b2d5f5b879e72c13a))
+- Chore: Apply for some internal renaming and cleaning up
 
 ## [0.5.0] - 2026-03-17
 

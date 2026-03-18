@@ -53,7 +53,7 @@ augment = "asero.augment:main"
 [project.urls]
 Homepage = "https://github.com/moodlehq/asero"
 Documentation = "https://github.com/moodlehq/asero/blob/main/README.md"
-Repository = "https://git.in.moodle.com/research/asero.git"
+Repository = "https://github.com/moodlehq/asero.git"
 
 [tool.coverage.run]
 branch = true

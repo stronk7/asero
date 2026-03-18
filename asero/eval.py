@@ -92,7 +92,7 @@ def evaluate(eval_file: str, metric: str = "top1"):
 
     # We are going to load the router, then the eval file, and compute metrics
     config = get_config()
-    router = SemanticRouter(config, eval_mode=False)  # Defaults to router_example.yaml
+    router = SemanticRouter(config)
 
     query_cache, query_cache_path, expected_checksum = _load_query_cache(eval_file, config)
 
@@ -107,9 +107,6 @@ def evaluate(eval_file: str, metric: str = "top1"):
     details = []           # store information about each case, so we can inspect/adjust stuff later
 
     # Evaluation loop
-    # get the last 100 elements for quick testing
-    # eval_data = eval_data[-100:] if len(eval_data) > 100 else eval_data
-
     for case in tqdm(eval_data, desc="Evaluating"):
 
         utterance = case["utterance"]
@@ -227,8 +224,8 @@ def optimise(eval_file: str, metric: str = "top1", write: bool = False):
     )
 
     config = get_config()
-    # eval_mode=True disables all thresholds so every route is considered.
-    router = SemanticRouter(config, eval_mode=True)
+    # apply_thresholds=False disables all thresholds so every route is considered.
+    router = SemanticRouter(config, apply_thresholds=False)
 
     query_cache, query_cache_path, expected_checksum = _load_query_cache(eval_file, config)
 
@@ -295,8 +292,8 @@ def optimise(eval_file: str, metric: str = "top1", write: bool = False):
             if top1 != q["expected"]:
                 fp_counts[top1] += 1
 
-    # --- Load a second router (eval_mode=False) to read current thresholds ---
-    router_orig = SemanticRouter(config, eval_mode=False)
+    # --- Load a second router to read current thresholds ---
+    router_orig = SemanticRouter(config)
 
     # --- Print results table ---
     col_route = 60
