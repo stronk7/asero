@@ -6,12 +6,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html),
 and commits should be formatted using [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
 
-## [Unreleased]
+## [0.6.0] - 2026-06-21
+
+### Added
+
+- Normalise: Add optional placeholder normalisation before embedding by @stronk7 ([c6ded54](https://github.com/moodlehq/asero/commit/c6ded542757bd29514b17107a50dd927eb743f91))
+
+### Changed
+
+- Normalise: Document --normalise-placeholders flag and env var ([397f18c](https://github.com/moodlehq/asero/commit/397f18caf3f08c1918dac9d62c17defca4b13280))
 
 ### Fixed
 
-- Output: Fix a few help/output typos and formatting issues ([4f9edd2](https://github.com/moodlehq/asero/commit/4f9edd21e129a8cf5b716a1b2d5f5b879e72c13a))
-- Chore: Apply for some internal renaming and cleaning up
+- Output: Fix a few help/output typos and formatting issues by @stronk7 ([4f9edd2](https://github.com/moodlehq/asero/commit/4f9edd21e129a8cf5b716a1b2d5f5b879e72c13a))
+- Chore: Apply for some internal renaming and cleaning up by @stronk7 ([d47b505](https://github.com/moodlehq/asero/commit/d47b505308793a3d0d02649b25020848d8575157))
+- Normalise: Use neutral noun placeholder and wire flag to demo run ([2ffe2c3](https://github.com/moodlehq/asero/commit/2ffe2c3881a117ef27778b834328001d2cf11343))
+
+**Full Changelog**: https://github.com/moodlehq/asero/compare/v0.5.0...v0.6.0
 
 ## [0.5.0] - 2026-03-17
 
@@ -224,7 +235,7 @@ and commits should be formatted using [Conventional Commits](https://www.convent
 
 **Full Changelog**: https://github.com/moodlehq/asero/compare/v0.2.0...v0.2.1
 
-[unreleased]: https://github.com/moodlehq/asero/compare/v0.5.0..HEAD
+[0.6.0]: https://github.com/moodlehq/asero/compare/v0.5.0..v0.6.0
 [0.5.0]: https://github.com/moodlehq/asero/compare/v0.4.3..v0.5.0
 [0.4.3]: https://github.com/moodlehq/asero/compare/v0.4.2..v0.4.3
 [0.4.2]: https://github.com/moodlehq/asero/compare/v0.4.1..v0.4.2
