@@ -9,6 +9,7 @@ A(nother) semantic routing system that classifies user queries into hierarchical
 - YAML-based configuration for routing tree structure
 - Transactional updates to routing configuration
 - OpenAI embedding model integration
+- Optional placeholder normalisation of quoted and `<<...>>` strings before embedding
 
 ## Requirements
 - Python 3.12 and up.
@@ -57,23 +58,36 @@ Run `augment --help` for full details.
 Runs the current router against a JSON eval file and reports top-K accuracy and MRR(K+1).
 
 ```
-asero --evaluate <path to eval file> [--metric top1|top2|top3|top4|top5]
+asero --evaluate <path to eval file> [--metric top1|top2|top3|top4|top5] [--normalise-placeholders]
 ```
 
 - **`--evaluate`** — path to the JSON evaluation file (produced by `augment`).
 - **`--metric`** — which top-K level to report as the headline accuracy figure (default: `top1`).
+- **`--normalise-placeholders`** — normalise quoted and `<<...>>` strings before embedding (see the [`--normalise-placeholders`](#--normalise-placeholders--normalise-text-before-embedding) section below).
 
 ### `asero --optimise` — tune per-route similarity thresholds
 
 Searches for the threshold values that maximise the chosen accuracy metric on a dataset, then optionally writes the results back to the router YAML.
 
 ```
-asero --optimise <path to eval file> [--metric top1|top2|top3|top4|top5] [--write]
+asero --optimise <path to eval file> [--metric top1|top2|top3|top4|top5] [--write] [--normalise-placeholders]
 ```
 
 - **`--optimise`** — path to the JSON evaluation file (produced by `augment`).
 - **`--metric`** — accuracy metric to maximise during the search (default: `top1`).
 - **`--write`** — when set, the optimised thresholds are written back to the router YAML file; without this flag the results are printed but not persisted.
+- **`--normalise-placeholders`** — normalise quoted and `<<...>>` strings before embedding (see the [`--normalise-placeholders`](#--normalise-placeholders--normalise-text-before-embedding) section below).
+
+### `--normalise-placeholders` — normalise text before embedding
+
+Available on the interactive `asero` demo as well as `asero --evaluate` and `asero --optimise`. It replaces balanced quoted strings (`"..."`, `'...'`) and `<<...>>` placeholders with a single neutral token before embedding **both** the router utterances and the incoming queries. This is useful when the literal contents of quotes or placeholders are noise rather than signal, and you want to compare routing accuracy with and without them.
+
+```
+asero [--evaluate <file> | --optimise <file>] --normalise-placeholders
+```
+
+- It can also be enabled via the **`NORMALISE_PLACEHOLDERS`** environment variable (set to `1`, `true`, or `yes`); the CLI flag takes precedence over the environment variable.
+- Toggling the setting invalidates both the utterance and query embedding caches, so the first run after a change re-embeds everything.
 
 ## Use as library
 
@@ -85,6 +99,10 @@ from asero.router import SemanticRouter
 
 # Load the configuration from a YAML file (see router_example.yaml)
 config = asero_config.get_config("path/to/valid/router.yaml")
+
+# Optionally normalise quoted and <<...>> strings before embedding
+# (equivalent to the --normalise-placeholders CLI flag / NORMALISE_PLACEHOLDERS env var):
+config = asero_config.get_config("path/to/valid/router.yaml", normalise_placeholders=True)
 
 # Create a router instance
 router = SemanticRouter(config)
