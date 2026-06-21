@@ -113,6 +113,9 @@ def load_or_regenerate_embedding_cache_for_tree(tree_root, config, tree_checksum
     If the cache exists and matches the current tree checksum, it is reused.
     Otherwise, the cache is updated incrementally or rebuilt.
 
+    When ``config.normalise_placeholders`` is True, utterances are normalised before
+    embedding so the cache is keyed by normalised strings.
+
     Args:
         tree_root (SemanticRouterNode): Root node of the tree.
         config (SemanticRouterConfig): Configuration object.
@@ -122,7 +125,13 @@ def load_or_regenerate_embedding_cache_for_tree(tree_root, config, tree_checksum
         dict: Updated embedding cache.
 
     """
-    all_unique_utts = set(tree_root.all_utterances())
+    raw_utts = set(tree_root.all_utterances())
+    if getattr(config, "normalise_placeholders", False):
+        from asero.normalise import normalise_placeholders
+        all_unique_utts = {normalise_placeholders(u) for u in raw_utts}
+    else:
+        all_unique_utts = raw_utts
+
     embedding_cache = {}
     if os.path.exists(config.cache_file):
         cache, cached_tree_checksum = load_embedding_cache(config.cache_file)
@@ -182,4 +191,5 @@ def compute_embedding_config_checksum(config) -> str:
     return compute_dict_checksum({
         "embedding_model": config.embedding_model,
         "embedding_dimensions": config.embedding_dimensions,
+        "normalise_placeholders": getattr(config, "normalise_placeholders", False),
     })

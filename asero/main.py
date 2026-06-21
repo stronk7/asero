@@ -63,6 +63,15 @@ def main():
         default="top1",
         help="Metric for --evaluate and --optimise (default: top1)",
     )
+    parser.add_argument(
+        "--normalise-placeholders",
+        action="store_true",
+        default=False,
+        help=(
+            "Replace quoted strings and <<...>> placeholders with PLACEHOLDER before "
+            "embedding utterances and queries (useful for comparing routing accuracy)"
+        ),
+    )
     args = parser.parse_args()
 
     loop = asyncio.new_event_loop()
@@ -70,9 +79,12 @@ def main():
     exitcode = 0
     try:
         if args.evaluate:
-            evaluate(args.evaluate, metric=args.metric)  # Let's execute the evaluation.
+            evaluate(args.evaluate, metric=args.metric, normalise_placeholders=args.normalise_placeholders)
         elif args.optimise:
-            optimise(args.optimise, metric=args.metric, write=args.write)  # Run threshold optimisation.
+            optimise(
+                args.optimise, metric=args.metric, write=args.write,
+                normalise_placeholders=args.normalise_placeholders,
+            )
         else:
             loop.run_until_complete(run())  # Run the interactive demo.
     except Exception:

@@ -28,6 +28,9 @@ class SemanticRouterConfig:
         threshold (float): Similarity threshold for routing.
         yaml_file (str): Path to the YAML file defining the tree structure.
         cache_file (str): Path to the JSON file for embedding cache.
+        normalise_placeholders (bool): When True, replace quoted and ``<<...>>``
+            strings with ``PLACEHOLDER`` before embedding utterances and
+            queries.  Changing this flag invalidates both caches.
 
     """
 
@@ -38,15 +41,19 @@ class SemanticRouterConfig:
     threshold: float
     yaml_file: str
     cache_file: str
+    normalise_placeholders: bool = False
 
 
-def get_config(yaml_tree_path: str | None = None) -> SemanticRouterConfig:
+def get_config(yaml_tree_path: str | None = None, normalise_placeholders: bool = False) -> SemanticRouterConfig:
     """Get the semantic router configuration.
 
     Args:
         yaml_tree_path (str | None): Optional path to the YAML file defining the tree structure.
-            If None, it will use the path defined in the environment variable `ROUTER_YAML_FILE`.
-            If the environment variable is not set, it defaults to `router_example.yaml`
+            If None, it will use the path defined in the environment variable ``ROUTER_YAML_FILE``.
+            If the environment variable is not set, it defaults to ``router_example.yaml``.
+        normalise_placeholders (bool): When True, replace quoted and ``<<...>>`` strings with
+            ``PLACEHOLDER`` before embedding.  Can also be enabled via the ``NORMALISE_PLACEHOLDERS``
+            environment variable (``1``, ``true``, or ``yes``).  Defaults to False.
 
     Returns:
         SemanticRouterConfig: The configuration instance.
@@ -69,6 +76,10 @@ def get_config(yaml_tree_path: str | None = None) -> SemanticRouterConfig:
     embedding_chunk_size = int(os.getenv("EMBEDDING_CHUNK_SIZE", "128"))
     default_threshold = float(os.getenv("DEFAULT_THRESHOLD", "0.5"))
 
+    # Text normalisation: parameter takes precedence; env var as fallback.
+    normalise_placeholders_env = os.getenv("NORMALISE_PLACEHOLDERS", "").lower() in ("1", "true", "yes")
+    normalise_placeholders = normalise_placeholders or normalise_placeholders_env
+
     # File paths.
     if yaml_tree_path is None:
         # If no path is provided, use the environment variable or default.
@@ -86,4 +97,5 @@ def get_config(yaml_tree_path: str | None = None) -> SemanticRouterConfig:
         threshold=default_threshold,
         yaml_file=yaml_tree_path,
         cache_file=cache_json_path,
+        normalise_placeholders=normalise_placeholders,
     )

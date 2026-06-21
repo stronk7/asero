@@ -192,6 +192,9 @@ class SemanticRouterNode:
     ) -> None:
         """Set the embedding indices for this node and its children.
 
+        When ``config.normalise_placeholders`` is True, utterances are normalised
+        before the cache lookup so the indices match the normalised cache keys.
+
         Args:
             embedding_cache (dict[str, np.ndarray]): {utterance: embedding array}
 
@@ -200,6 +203,9 @@ class SemanticRouterNode:
             self.embedding_indices = []
         else:
             utts = self.all_utterances()
+            if getattr(self.config, "normalise_placeholders", False):
+                from asero.normalise import normalise_placeholders
+                utts = [normalise_placeholders(u) for u in utts]
             self.embedding_indices = [u for u in utts if u in embedding_cache]
         for c in self.children:
             c.compute_embedding_indices(embedding_cache)
@@ -232,12 +238,18 @@ class SemanticRouterNode:
                 (route_path, similarity_score, depth, is_leaf)
 
         """
-        if query_cache is not None and query in query_cache:
-            embedding = [query_cache[query]]
+        if getattr(self.config, "normalise_placeholders", False):
+            from asero.normalise import normalise_placeholders
+            query_key = normalise_placeholders(query)
         else:
-            embedding = get_embeddings([query], self.config)
+            query_key = query
+
+        if query_cache is not None and query_key in query_cache:
+            embedding = [query_cache[query_key]]
+        else:
+            embedding = get_embeddings([query_key], self.config)
             if query_cache is not None and embedding:
-                query_cache[query] = embedding[0]
+                query_cache[query_key] = embedding[0]
         sim_cache = {}
         results = {}
 
@@ -495,7 +507,12 @@ class SemanticRouter:
 
         self.root, self.tree_dict = SemanticRouterNode.load(config, apply_thresholds=apply_thresholds)
         self.root.validate_and_fix_nodes(self.root)
-        self.tree_checksum = compute_dict_checksum(self.tree_dict)
+        # Include normalise_placeholders in the tree checksum so that toggling the flag
+        # invalidates the utterance embedding cache.
+        self.tree_checksum = compute_dict_checksum({
+            "tree": self.tree_dict,
+            "normalise_placeholders": config.normalise_placeholders,
+        })
         self.embedding_cache = load_or_regenerate_embedding_cache_for_tree(self.root, config, self.tree_checksum)
         self.root.compute_embedding_indices(self.embedding_cache)
 

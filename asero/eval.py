@@ -70,13 +70,16 @@ class EvaluationResult:
     is_leaf: bool
 
 
-def evaluate(eval_file: str, metric: str = "top1"):
+def evaluate(eval_file: str, metric: str = "top1", normalise_placeholders: bool = False):
     """Run evaluation on the supplied eval file instead of the interactive loop.
 
     Args:
         eval_file (str): Path to the JSON eval file.
         metric (str): Evaluation metric — ``"top1"`` through ``"top5"``.
             Defaults to ``"top1"``.
+        normalise_placeholders (bool): When True, replace quoted and ``<<...>>`` strings
+            with ``PLACEHOLDER`` before embedding utterances and queries.
+            Defaults to False.
 
     """
     if not os.path.isabs(eval_file):
@@ -91,7 +94,7 @@ def evaluate(eval_file: str, metric: str = "top1"):
     top_n = mrr_k
 
     # We are going to load the router, then the eval file, and compute metrics
-    config = get_config()
+    config = get_config(normalise_placeholders=normalise_placeholders)
     router = SemanticRouter(config)
 
     query_cache, query_cache_path, expected_checksum = _load_query_cache(eval_file, config)
@@ -196,7 +199,7 @@ def _compute_metric_for_threshold(query_results: list, route: str, threshold: fl
     return hits
 
 
-def optimise(eval_file: str, metric: str = "top1", write: bool = False):
+def optimise(eval_file: str, metric: str = "top1", write: bool = False, normalise_placeholders: bool = False):
     """Run threshold optimisation on the supplied eval file.
 
     Loads the router in eval mode (thresholds disabled), collects raw similarity
@@ -209,6 +212,9 @@ def optimise(eval_file: str, metric: str = "top1", write: bool = False):
         metric (str): Optimisation objective — ``"top1"`` through ``"top5"``.
             Defaults to ``"top1"``.
         write (bool): If True, write optimised thresholds back to the YAML file.
+        normalise_placeholders (bool): When True, replace quoted and ``<<...>>`` strings
+            with ``PLACEHOLDER`` before embedding utterances and queries.
+            Defaults to False.
 
     """
     if not os.path.isabs(eval_file):
@@ -223,7 +229,7 @@ def optimise(eval_file: str, metric: str = "top1", write: bool = False):
         "Recommendation: use separate calibration and test splits.\n"
     )
 
-    config = get_config()
+    config = get_config(normalise_placeholders=normalise_placeholders)
     # apply_thresholds=False disables all thresholds so every route is considered.
     router = SemanticRouter(config, apply_thresholds=False)
 

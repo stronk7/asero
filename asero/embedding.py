@@ -50,6 +50,11 @@ def get_embeddings(texts, config) -> list[np.ndarray] | None:
 def get_or_create_embeddings(utterances, config, cache):
     """Retrieve embeddings for a list of utterances, fetching missing ones from the API.
 
+    When ``config.normalise_placeholders`` is True, each utterance is normalised
+    (quoted and ``<<...>>`` strings replaced by ``PLACEHOLDER``) before the
+    cache lookup and before embedding.  The cache is therefore keyed by
+    normalised strings in that mode.
+
     Args:
         utterances (list[str]): List of utterances to get embeddings for.
         config (SemanticRouterConfig): Configuration object.
@@ -59,6 +64,10 @@ def get_or_create_embeddings(utterances, config, cache):
         list[np.ndarray]: List of embedding vectors in the same order as input utterances.
 
     """
+    if getattr(config, "normalise_placeholders", False):
+        from asero.normalise import normalise_placeholders
+        utterances = [normalise_placeholders(u) for u in utterances]
+
     embeddings = []
     to_fetch = []
     fetch_indices = []
