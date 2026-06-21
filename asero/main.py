@@ -13,9 +13,9 @@ from asero.eval import evaluate, optimise
 from asero.router import SemanticRouter
 
 
-async def run():
+async def run(normalise_placeholders: bool = False):
     """Demonstrate the SemanticRouter functionality."""
-    config = get_config()
+    config = get_config(normalise_placeholders=normalise_placeholders)
     router = SemanticRouter(config)  # Defaults to router_example.yaml
     top = 3
 
@@ -86,7 +86,9 @@ def main():
                 normalise_placeholders=args.normalise_placeholders,
             )
         else:
-            loop.run_until_complete(run())  # Run the interactive demo.
+            loop.run_until_complete(  # Run the interactive demo.
+                run(normalise_placeholders=args.normalise_placeholders)
+            )
     except Exception:
         traceback.print_exc()
         exitcode = 1

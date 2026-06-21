@@ -2,7 +2,7 @@
 #  SPDX-License-Identifier: BSD-3-Clause
 
 """Text normalisation utilities for asero semantic router."""
-
+import logging
 import re
 
 # Double-quoted strings: at least one character, no newlines inside.
@@ -15,7 +15,9 @@ _RE_SINGLE_QUOTED = re.compile(r"(?<!\w)'[^'\n]+'")
 # Angle-bracket placeholders: <<...>> with no newlines inside.
 _RE_ANGLE_BRACKETS = re.compile(r"<<[^>\n]*>>")
 
-PLACEHOLDER = "PLACEHOLDER"
+PLACEHOLDER = "item"  # Best if the placeholder is a short, neutral noun. Better than blank, symbols or other words.
+
+logger = logging.getLogger(__name__)
 
 
 def normalise_placeholders(text: str) -> str:
